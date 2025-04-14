@@ -1,5 +1,5 @@
 import { ApiResponse } from "../types";
-import { LoginResponse } from "../types/auth";
+import { LoginResponse, UserResponse } from "../types/auth";
 import axiosInstance from "./api";
 
 export const register = async (body: {
@@ -16,5 +16,10 @@ export const login = async (body: {
   password: string;
 }): Promise<LoginResponse> => {
   const response = await axiosInstance.post("/auth/login", body);
+  return response.data;
+};
+
+export const verifyUser = async (): Promise<UserResponse> => {
+  const response = await axiosInstance.get("/auth/verify");
   return response.data;
 };
