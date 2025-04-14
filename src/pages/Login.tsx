@@ -1,16 +1,21 @@
 import { FormEvent, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 
 import { validateEmail, validatePassword } from "../utils/form-validations";
+import { getAxiosErrorMessage } from "../utils/error-handling";
+import { login } from "../services/auth";
+import Loader from "../components/Loader";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     const isValidEmail = validateEmail(email);
@@ -25,6 +30,17 @@ export default function Login() {
         "Password should contain at least 8 characters, including a special character and a number!"
       );
       return;
+    }
+
+    try {
+      setLoading(true);
+      const res = await login({ email, password });
+      localStorage.setItem("token", res.data.token);
+      navigate("/");
+    } catch (error) {
+      toast.error(getAxiosErrorMessage(error));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -83,9 +99,9 @@ export default function Login() {
 
           <button
             type="submit"
-            className="w-full bg-secondary-200 text-primary-200 border border-secondary-200 cursor-pointer py-2 rounded-md hover:scale-105 active:scale-95 transition-transform duration-300 font-semibold font-secondary"
+            className="w-full bg-secondary-200 text-primary-200 border border-secondary-200 cursor-pointer py-2 rounded-md hover:scale-105 active:scale-95 transition-transform duration-300 font-semibold font-secondary flex justify-center items-center"
           >
-            Login
+            {loading ? <Loader /> : "Login"}
           </button>
 
           <Link

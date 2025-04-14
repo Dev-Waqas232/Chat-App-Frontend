@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 
@@ -8,14 +8,19 @@ import {
   validateName,
   validatePassword,
 } from "../utils/form-validations";
+import { register } from "../services/auth";
+import { getAxiosErrorMessage } from "../utils/error-handling";
+import Loader from "../components/Loader";
 
 export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmoit = (e: FormEvent) => {
+  const handleSubmoit = async (e: FormEvent) => {
     e.preventDefault();
 
     const isValidName = validateName(name);
@@ -36,6 +41,15 @@ export default function Register() {
         "Password should contain at least 8 characters, including a special character and a number!"
       );
       return;
+    }
+    try {
+      setLoading(true);
+      await register({ name, email, password });
+      navigate("/login");
+    } catch (error) {
+      toast.error(getAxiosErrorMessage(error));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -111,9 +125,10 @@ export default function Register() {
 
           <button
             type="submit"
-            className="w-full bg-secondary-200 text-primary-200 border border-secondary-200 cursor-pointer py-2 rounded-md hover:scale-105 active:scale-95 transition-transform duration-300 font-semibold font-secondary"
+            className="w-full bg-secondary-200 text-primary-200 border border-secondary-200 cursor-pointer py-2 rounded-md hover:scale-105 active:scale-95 transition-transform duration-300 font-semibold font-secondary disabled:cursor-not-allowed flex justify-center items-center"
+            disabled={loading}
           >
-            Register
+            {loading ? <Loader /> : "Register"}
           </button>
 
           <Link
