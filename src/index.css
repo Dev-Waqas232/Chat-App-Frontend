@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
+
 @import "tailwindcss";
 
 @theme {
@@ -5,4 +7,7 @@
   --color-primary-200: #6d2932;
   --color-secondary-100: #e8d8c4;
   --color-secondary-200: #c7b7a3;
+
+  --font-primary: "Inter", "sans-serif";
+  --font-secondary: "JetBrains Mono", "monospace";
 }
