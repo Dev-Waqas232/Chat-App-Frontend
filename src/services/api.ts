@@ -32,10 +32,19 @@ let isRefreshing = false;
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
+    console.log("Error", error);
     const originalRequest = error.config as AxiosRequestConfig & {
       _retry?: boolean;
     };
 
+    // No token at all, immediately redirect
+    const token = localStorage.getItem("token");
+    if (error.response?.status === 401 && !token) {
+      window.location.href = "/login";
+      return Promise.reject(error);
+    }
+
+    // Token exists but maybe expired — try refresh flow
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
@@ -54,6 +63,7 @@ axiosInstance.interceptors.response.use(
 
           return axiosInstance(originalRequest);
         } catch (refreshError) {
+          // Refresh failed — redirect to login
           localStorage.removeItem("token");
           window.location.href = "/login";
 
