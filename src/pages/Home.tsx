@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Loader from "../components/Loader";
 import { verifyUser } from "../services/auth";
+import ChatScreen from "../components/ChatScreen";
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
@@ -29,6 +30,8 @@ export default function Home() {
     );
 
   return (
-    <main className="bg-primary-100 h-screen text-secondary-100">Home</main>
+    <main className="bg-primary-100 h-screen text-secondary-100">
+      <ChatScreen />
+    </main>
   );
 }
